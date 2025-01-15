@@ -11,6 +11,11 @@ export class UserRepository {
     return this.userModel.create(user);
   }
 
+  async list(filter?: Record<string, any>): Promise<User[]> {
+    return this.userModel.find(filter).exec();
+  }
+  
+
   async paginatedList(page: number, limit: number): Promise<{ data: User[]; total: number }> {
     const skip = (page - 1) * limit;
     const data = await this.userModel

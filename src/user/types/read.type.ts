@@ -1,6 +1,6 @@
 import { ReadUserResponseDto } from "../dto/read.dto";
 
-export type ReadUserResponseType = {
+export type ListUserPaginatedResponseType = {
   userData: ReadUserResponseDto[];
   total: number;
   totalPages: number;

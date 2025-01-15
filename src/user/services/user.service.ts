@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { User } from '../schemas/user.schema';
 import { UserRepository } from '../repositories/user.repository';
 import { ReadUserResponseDto } from '../dto/read.dto';
-import { ReadUserResponseType } from '../types/read.type';
+import { ListUserPaginatedResponseType } from '../types/read.type';
 
 @Injectable()
 export class UserService {
@@ -21,7 +21,18 @@ export class UserService {
     }
   }
 
-  async paginatedList(page: number, limit: number): Promise<ReadUserResponseType> {
+  async list(filter: any): Promise<ReadUserResponseDto[]> {
+    try {
+      const data = await this.userRepo.list(filter);
+      const userData = ReadUserResponseDto.fromArray(data);
+      return userData;
+    } catch (error) {
+      this.handleError('debounced search', error);
+    }
+  }
+  
+
+  async paginatedList(page: number, limit: number): Promise<ListUserPaginatedResponseType> {
     try {
       const { data, total } = await this.userRepo.paginatedList(page, limit);
       const userData = ReadUserResponseDto.fromArray(data);
@@ -35,7 +46,7 @@ export class UserService {
         nextPage,
       };
     } catch (error) {
-      this.handleError('list', error);
+      this.handleError('paginated list', error);
     }
   }
   
