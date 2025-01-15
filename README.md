@@ -24,4 +24,4 @@
 
 ## Description
 
-A simple CRUD app for user management with mongo and nest. It is for POV purposes only so there is no auth nor secret management. In order to use you have to run mongo locally.
+A simple CRUD app for user management with mongo and nest. It is for POC purposes only so there is no auth nor secret management. In order to use you have to run mongo locally.
