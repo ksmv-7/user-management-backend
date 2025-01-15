@@ -3,6 +3,8 @@ import { User } from '../schemas/user.schema';
 import { UserRepository } from '../repositories/user.repository';
 import { ReadUserResponseDto } from '../dto/read.dto';
 import { ListUserPaginatedResponseType } from '../types/read.type';
+import { schemaToReadUserResponseMapper, updateUserDtoToUserSchemaMapper } from '../mappers/mappers';
+import { UpdateUserDto } from '../dto/update.dto';
 
 @Injectable()
 export class UserService {
@@ -21,11 +23,19 @@ export class UserService {
     }
   }
 
+  async get(id: string): Promise<ReadUserResponseDto | null> {
+    try {
+      const user = await this.userRepo.get(id);
+      return schemaToReadUserResponseMapper(user);
+    } catch (error) {
+      this.handleError('get', error);
+    }
+  }
+
   async list(filter: any): Promise<ReadUserResponseDto[]> {
     try {
       const data = await this.userRepo.list(filter);
-      const userData = ReadUserResponseDto.fromArray(data);
-      return userData;
+      return schemaToReadUserResponseMapper(data);
     } catch (error) {
       this.handleError('debounced search', error);
     }
@@ -35,7 +45,7 @@ export class UserService {
   async paginatedList(page: number, limit: number): Promise<ListUserPaginatedResponseType> {
     try {
       const { data, total } = await this.userRepo.paginatedList(page, limit);
-      const userData = ReadUserResponseDto.fromArray(data);
+      const userData = schemaToReadUserResponseMapper(data);
       const totalPages = Math.ceil(total / limit);
       const nextPage = page < totalPages ? page + 1 : undefined;
 
@@ -52,16 +62,18 @@ export class UserService {
   
   async findById(id: string): Promise<ReadUserResponseDto | null> {
     try {
-      const user = new ReadUserResponseDto(await this.userRepo.findById(id))
-      return user
+      const user = await this.userRepo.get(id);
+      return schemaToReadUserResponseMapper(user)
     } catch (error) {
       this.handleError('findById', error);
     }
   }
 
-  async update(id: string, user: Partial<User>): Promise<User | null> {
+  async update(id: string, user: UpdateUserDto): Promise<ReadUserResponseDto | null> {
     try {
-      return this.userRepo.update(id, user);
+      const mappedToSchema = updateUserDtoToUserSchemaMapper(user);
+      const updatedUser = await this.userRepo.update(id, mappedToSchema);
+      return schemaToReadUserResponseMapper(updatedUser)
     } catch (error) {
       this.handleError('update', error);
     }
@@ -69,8 +81,8 @@ export class UserService {
 
   async delete(id: string): Promise<ReadUserResponseDto | null> {
     try {
-      const deletedUser = new ReadUserResponseDto(await this.userRepo.delete(id))
-      return deletedUser;
+      const deletedUser = await this.userRepo.delete(id);
+      return schemaToReadUserResponseMapper(deletedUser);
     } catch (error) {
       this.handleError('delete', error);
     }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../schemas/user.schema';
+import { ObjectId } from "mongodb";
 
 @Injectable()
 export class UserRepository {
@@ -29,15 +30,15 @@ export class UserRepository {
     return { data, total };
   }
 
-  async findById(id: string): Promise<User | null> {
-    return this.userModel.findById(id).exec();
+  async get(id: string): Promise<User | null> {
+    return this.userModel.findById(new ObjectId(id)).exec();
   }
 
   async update(id: string, user: Partial<User>): Promise<User | null> {
-    return this.userModel.findByIdAndUpdate(id, user, { new: true }).exec();
+    return this.userModel.findByIdAndUpdate(new ObjectId(id), user, { new: true }).exec();
   }
 
   async delete(id: string): Promise<User | null> {
-    return this.userModel.findByIdAndDelete(id).exec();
+    return this.userModel.findByIdAndDelete(new ObjectId(id)).exec();
   }
 }
