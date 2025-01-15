@@ -1,4 +1,4 @@
-import { Controller, Get, InternalServerErrorException, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Delete, Get, InternalServerErrorException, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { ReadUserResponseDto } from '../dto/read.dto';
 import { ReadUserResponseType } from '../types/read.type';
@@ -20,10 +20,10 @@ export class UserController {
     }
   }
 
-  @Get(':id')
-  async get(@Param('id') id: string): Promise<ReadUserResponseDto | null> {
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<ReadUserResponseDto | null> {
     try {
-      return await this.userService.findById(id);
+      return await this.userService.delete(id);
     } catch (error) {
       console.error('Error fetching user:', error);
       throw new InternalServerErrorException('Error fetching user');

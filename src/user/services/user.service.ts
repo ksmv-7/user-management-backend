@@ -56,9 +56,10 @@ export class UserService {
     }
   }
 
-  async delete(id: string): Promise<User | null> {
+  async delete(id: string): Promise<ReadUserResponseDto | null> {
     try {
-      return this.userRepo.delete(id);
+      const deletedUser = new ReadUserResponseDto(await this.userRepo.delete(id))
+      return deletedUser;
     } catch (error) {
       this.handleError('delete', error);
     }
