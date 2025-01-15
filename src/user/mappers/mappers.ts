@@ -1,13 +1,15 @@
-import { UpdateUserDto } from "../dto/update.dto";
+import { CreateUserDto, UpdateUserDto } from "../dto/update.dto";
 import { User } from "../schemas/user.schema";
 
-export function updateUserDtoToUserSchemaMapper(updateUserDto: UpdateUserDto) {
+
+export function updateUserDtoToUserSchemaMapper(updateUserDto: CreateUserDto | UpdateUserDto) {
   return {
     email: updateUserDto.email,
     name: updateUserDto.name,
     phone: updateUserDto.phone,
   }
 }
+
 export function schemaToReadUserResponseMapper (userSchema: User | User[]) {
   if (!userSchema || (Array.isArray(userSchema) && userSchema.length === 0)) {
     return null;

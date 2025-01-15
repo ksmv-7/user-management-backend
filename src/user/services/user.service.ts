@@ -4,7 +4,7 @@ import { UserRepository } from '../repositories/user.repository';
 import { ReadUserResponseDto } from '../dto/read.dto';
 import { ListUserPaginatedResponseType } from '../types/read.type';
 import { schemaToReadUserResponseMapper, updateUserDtoToUserSchemaMapper } from '../mappers/mappers';
-import { UpdateUserDto } from '../dto/update.dto';
+import { CreateUserDto, UpdateUserDto } from '../dto/update.dto';
 
 @Injectable()
 export class UserService {
@@ -15,9 +15,10 @@ export class UserService {
     throw new InternalServerErrorException(`Failed to ${method} user`);
   }
 
-  async create(user: Partial<User>): Promise<User> {
+  async create(user: CreateUserDto): Promise<ReadUserResponseDto | null> {
     try {
-      return await this.userRepo.create(user);
+      const createdUser = await this.userRepo.create(updateUserDtoToUserSchemaMapper(user));
+      return schemaToReadUserResponseMapper(createdUser);
     } catch (error) {
       this.handleError('create', error);
     }

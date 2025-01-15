@@ -3,7 +3,7 @@ import { UserService } from '../services/user.service';
 import { ReadUserResponseDto } from '../dto/read.dto';
 import { ListUserPaginatedResponseType } from '../types/read.type';
 import { FilterQueryValidationPipe } from 'src/common/pipes/validate-search-query.pipe';
-import { UpdateUserDto } from '../dto/update.dto';
+import { CreateUserDto, UpdateUserDto } from '../dto/update.dto';
 
 @Controller('users')
 export class UserController {
@@ -38,6 +38,16 @@ export class UserController {
   async get(@Param('id') id: string): Promise<ReadUserResponseDto> {
     try {
       return this.userService.get(id);
+    } catch (error) {
+      console.error('Error listing users:', error);
+      throw new InternalServerErrorException('Error listing users');
+    }
+  }
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) : Promise<ReadUserResponseDto> {
+    try {
+      return this.userService.create(createUserDto);
     } catch (error) {
       console.error('Error listing users:', error);
       throw new InternalServerErrorException('Error listing users');
